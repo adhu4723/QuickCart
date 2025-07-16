@@ -108,7 +108,7 @@ function CategorySec({ label }) {
                     className='flex gap-2 overflow-x-scroll scroll-smooth no-scrollbar px-10'
                 >
                     {categoryData.map((item, index) => (
-                        <Link to={`/collection/${item.name}`} key={index} className='shrink-0 bg-white shadow-sm cursor-pointer w-[150px] h-[150px] relative rounded-full'>
+                        <Link to={`/${item.name}`} key={index} className='shrink-0 bg-white shadow-sm cursor-pointer w-[150px] h-[150px] relative rounded-full'>
                             <div>
                                 <img
                                     className='absolute bottom-10 left-5 rounded-full filter grayscale'

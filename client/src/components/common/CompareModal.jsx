@@ -67,7 +67,7 @@ function CompareModal({ onClose, productData }) {
     <div className='fixed inset-0 z-50 flex items-center px-4 justify-center bg-black/50'>
       <div className='bg-white w-full max-w-5xl  rounded-lg relative flex flex-col'>
         {/* Fixed Header */}
-        <div className='flex justify-between items-center p-4 border-b border-gray-300 sticky top-0 bg-white z-10'>
+        <div className='flex justify-between items-center p-4 border-b border-gray-300  bg-white z-10'>
           <h1 className='uppercase font-semibold text-lg'>Compare Box</h1>
           <button onClick={onClose} className='text-gray-600 hover:text-black'>
             <X size={24} />
@@ -77,7 +77,7 @@ function CompareModal({ onClose, productData }) {
           <div className="p-6 text-center text-gray-600">No data to compare</div>
         ) : (
           <div className='overflow-y-auto p-4'>
-            <table className='uppercase  border border-gray-300 text-sm'>
+            <table className='uppercase  borde                                                                                    r border-gray-300 text-sm'>
               <thead>
                 <tr className='border border-gray-300 '>
                   <th className='p-2 font-medium text-left w-[260px]'>Features</th>

@@ -104,7 +104,7 @@ const handleverify=async(e)=>{
                     label="Password"
                 />
 
-                <div className='flex justify-between items-center'>
+                <div className='flex flex-wrap gap-2 justify-between items-center'>
                     <Button loading={loading} disabled={loading} type="submit" label="Register" />
                     <p>
                         Already have an account?{' '}

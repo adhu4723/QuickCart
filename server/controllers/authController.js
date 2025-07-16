@@ -3,6 +3,8 @@ const transporter = require('../config/mailer');
 const User = require('../models/User');
 const Otp = require('../models/Otp');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 
 
 exports.signup = async (req, res) => {
@@ -92,6 +94,37 @@ exports.login = async (req, res) => {
     );
 
     res.status(200).json({ message: 'Login successful', token });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+exports.adminLogin = async (req, res) => {
+  const { email, password } = req.body;
+  console.log(req.body);
+  
+
+  try {
+    // Compare with environment variables
+    console.log( 'process.env.ADMIN_EMAIL', process.env.ADMIN_EMAIL);
+    console.log('process.env.ADMIN_PASSWORD',process.env.ADMIN_PASSWORD);
+    
+    
+    if (
+      email !== process.env.ADMIN_EMAIL ||
+      password !== process.env.ADMIN_PASSWORD
+    ) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.status(200).json({ message: 'Admin login successful', token });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }

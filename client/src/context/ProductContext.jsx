@@ -22,42 +22,53 @@ export const ProductProvider = ({ children }) => {
     setCompareData(prev => prev.filter(items => items.id != id))
   }
 
-  const handleFilterProduct = (category, subCategory, sortdata) => {
-    console.log('sortdata', sortdata);
-    switch (sortdata) {
-      case 'ratingInc':
-        setFilteredData(productData.sort((a,b)=>a.rating-b.rating))
-        
-        break;
-        case 'ratingDec':
-        setFilteredData(productData.sort((a,b)=>b.rating-a.rating))
-        
-        break;
-        case 'priceInc':
-        setFilteredData(productData.sort((a,b)=>a.price-b.price))
-        
-        break;
-         case 'priceDec':
-        setFilteredData(productData.sort((a,b)=>b.price-a.price))
-        
-        break;
-    
-      default:
-        console.log('invalid');
-        
-        break;
-    }
+  const handleFilterProduct = (category, subCategory, sortdata, priceRange, availability) => {
+  let filtered = productData;
 
-    if (subCategory) {
-      // Filter by both category and subcategory
-      setFilteredData(productData.filter(
-        item => item.category === category && item.subCategory === subCategory
-      ));
-    } else {
-      // Only category-level filter
-      setFilteredData(productData.filter(item => item.category === category));
-    }
-  };
+  // Filter by category
+  if (category) {
+    filtered = filtered.filter(item => item.category === category);
+  }
+
+  // Filter by subcategory
+  if (subCategory) {
+    filtered = filtered.filter(item => item.subCategory === subCategory);
+  }
+
+  // Filter by price range
+  const [minPrice, maxPrice] = priceRange;
+  filtered = filtered.filter(item => item.price >= minPrice && item.price <= maxPrice);
+
+  // Filter by availability
+  filtered = filtered.filter(item => {
+    if (availability.inStock && item.stock > 0) return true;
+    if (availability.outOfStock && item.stock === 0) return true;
+    return false;
+  });
+
+  
+
+  // Sorting
+  switch (sortdata) {
+    case 'ratingInc':
+      filtered = filtered.sort((a, b) => a.rating - b.rating);
+      break;
+    case 'ratingDec':
+      filtered = filtered.sort((a, b) => b.rating - a.rating);
+      break;
+    case 'priceInc':
+      filtered = filtered.sort((a, b) => a.price - b.price);
+      break;
+    case 'priceDec':
+      filtered = filtered.sort((a, b) => b.price - a.price);
+      break;
+    default:
+      break;
+  }
+
+  setFilteredData(filtered);
+};
+
 
   console.log(filteredData);
 

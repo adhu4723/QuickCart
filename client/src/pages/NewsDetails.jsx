@@ -25,7 +25,7 @@ function NewsDetails() {
             <Breadcrumb page={'news'} label={NewsDetails.title} />
             <div>
 
-                <img className='p-2 border  border-gray-300 w-full h-fit' src={NewsDetails.img} alt="" />
+                <img className='p-2 border  border-gray-300 w-full ' src={NewsDetails.img} alt="" />
             </div>
             <div className='flex items-start gap-4'>
                 <div className='uppercase flex flex-col w-fit text-center border  border-gray-300 '>

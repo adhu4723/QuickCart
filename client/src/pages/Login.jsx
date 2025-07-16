@@ -48,7 +48,7 @@ function Login() {
           onChange={handleChange}
         />
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-wrap gap-2 justify-between items-center">
           <Button loading={loading} disabled={loading} label="Login" type="submit" />
           <p>
             Don't have an account?{' '}

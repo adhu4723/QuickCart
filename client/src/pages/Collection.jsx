@@ -13,6 +13,9 @@ import Breadcrumb from '../components/common/Breadcrumb';
 import { ProductContext } from '../context/ProductContext';
 import ProductCard from '../components/common/ProductCard';
 
+import 'rc-slider/assets/index.css';
+import { Range } from 'react-range';
+
 const categoriesData = [
   {
     name: 'Accessories',
@@ -29,7 +32,7 @@ const categoriesData = [
     children: [
       { name: 'Men', count: 2 },
       { name: 'Women', count: 2 },
-       { name: 'Footwear', count: 1 },
+      { name: 'Footwear', count: 1 },
     ],
   },
   {
@@ -38,7 +41,7 @@ const categoriesData = [
     children: [
       { name: 'Mobiles', count: 2 },
       { name: 'Watches', count: 2 },
-      {name: 'Audio', count:4},
+      { name: 'Audio', count: 4 },
     ],
   },
 ];
@@ -46,13 +49,12 @@ const categoriesData = [
 const sizes = ['Small', 'Large', 'Extra Large'];
 
 function Collection() {
-const { category, subCategory } = useParams();
-  const {filteredData,handleFilterProduct}=useContext(ProductContext)
-  const [sortdata,setsortData]=useState('')
+  const { category, subCategory } = useParams();
+  const { filteredData, handleFilterProduct } = useContext(ProductContext)
+  const [sortdata, setsortData] = useState('')
+  console.log('category, subCategory,', category, subCategory);
 
-  useEffect(()=>{
-handleFilterProduct(category,subCategory,sortdata)
-  },[category,subCategory,sortdata])
+
   const [openSections, setOpenSections] = useState({
     categories: true,
     price: true,
@@ -60,7 +62,7 @@ handleFilterProduct(category,subCategory,sortdata)
     availability: true,
   });
   const [openCategories, setOpenCategories] = useState({});
-  const [priceRange, setPriceRange] = useState([0, 299]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [availability, setAvailability] = useState({
     inStock: true,
@@ -69,7 +71,7 @@ handleFilterProduct(category,subCategory,sortdata)
   const [showSidebar, setShowSidebar] = useState(false); // ➕ NEW
 
   console.log(openCategories);
-  
+
 
   const toggleSection = (key) => {
     setOpenSections((prev) => ({
@@ -104,6 +106,11 @@ handleFilterProduct(category,subCategory,sortdata)
     }));
   };
 
+
+  useEffect(() => {
+    handleFilterProduct(category, subCategory, sortdata, priceRange, availability);
+  }, [category, subCategory, sortdata, priceRange, availability]);
+
   return (
     <div>
       <Breadcrumb page="collection" label={category} />
@@ -134,7 +141,7 @@ handleFilterProduct(category,subCategory,sortdata)
               <ul className="space-y-2">
                 {categoriesData.map((cat) => (
                   <li key={cat.name}>
-                   
+
                     <Link to={`/${cat.name}`}
                       onClick={() => toggleCategory(cat.name)}
                       className="w-full   flex justify-between items-center text-left hover:text-blue-600"
@@ -149,14 +156,14 @@ handleFilterProduct(category,subCategory,sortdata)
                           <ChevronRight size={14} />
                         ))}
                     </Link>
-                  
+
                     {cat.children.length > 0 && openCategories[cat.name] && (
                       <ul className="ml-4 mt-1 space-y-1 text-gray-600">
                         {cat.children.map((sub) => (
                           <li>
-                          <Link to={`/${cat.name}/${sub.name}`} key={sub.name}>
-                            {sub.name} ({sub.count})
-                          </Link>
+                            <Link to={`/${cat.name}/${sub.name}`} key={sub.name}>
+                              {sub.name} ({sub.count})
+                            </Link>
                           </li>
                         ))}
                       </ul>
@@ -177,9 +184,20 @@ handleFilterProduct(category,subCategory,sortdata)
             </div>
             {openSections.price && (
               <div className="space-y-2">
-                <div className="h-1 bg-gray-300 rounded-full relative">
-                  <div className="absolute top-0 left-[10%] w-[80%] h-full bg-black rounded-full" />
-                </div>
+                <Range
+                  step={20}
+                  min={0}
+                  max={1000}
+                  values={priceRange}
+                  onChange={values => setPriceRange(values)}
+                  renderTrack={({ props, children }) => (
+                    <div {...props} className="h-1 bg-gray-300 relative">{children}</div>
+                  )}
+                  renderThumb={({ props }) => (
+                    <div {...props} className="h-4 w-4 bg-blue-600 rounded-full" />
+                  )}
+                />
+
                 <div className="flex  items-center gap-2 md:flex-col lg:flex-row">
                   <input
                     type="number"
@@ -217,11 +235,10 @@ handleFilterProduct(category,subCategory,sortdata)
                   <button
                     key={size}
                     onClick={() => toggleSize(size)}
-                    className={`border border-gray-300 px-2 py-1 text-xs ${
-                      selectedSizes.includes(size)
-                        ? 'bg-black text-white'
-                        : 'text-gray-700'
-                    }`}
+                    className={`border border-gray-300 px-2 py-1 text-xs ${selectedSizes.includes(size)
+                      ? 'bg-black text-white'
+                      : 'text-gray-700'
+                      }`}
                   >
                     {size}
                   </button>
@@ -263,40 +280,44 @@ handleFilterProduct(category,subCategory,sortdata)
 
         {/* Product Area */}
         <div className="md:col-span-5 ">
-        <div className='flex justify-between border border-gray-300 py-3 px-4'>
-        <div className='text-gray-600 font-light text-sm'>
-          <span>Sort by:  </span>
-            <select value={sortdata} onChange={(e)=>setsortData(e.target.value)} className=' border border-gray-300 focus:outline-none p-2'>
-              <option value="">Featured</option>
-               <option value="popular">Popularity</option>
-               <option value="priceInc">Price,low to high</option>
-               <option value="priceDec">Price,high to low</option>
-               <option value="ratingInc">Rating ,low to high</option>
-               <option value="ratingDec">Rating ,high to low</option>
+          <div className='flex justify-between border border-gray-300 py-3 px-4'>
+            <div className='text-gray-600 font-light text-sm'>
+              <span>Sort by:  </span>
+              <select value={sortdata} onChange={(e) => setsortData(e.target.value)} className=' border border-gray-300 focus:outline-none p-2'>
+                <option value="">Featured</option>
+                <option value="popular">Popularity</option>
+                <option value="priceInc">Price,low to high</option>
+                <option value="priceDec">Price,high to low</option>
+                <option value="ratingInc">Rating ,low to high</option>
+                <option value="ratingDec">Rating ,high to low</option>
 
-            </select>
-        
-        </div>
-        <div className='text-gray-600 font-light text-sm'>
-          <span>Show: </span>
-            <select className=' border border-gray-300 focus:outline-none p-2'>
-              <option value="">5</option>
-               <option value="">15</option>
-               <option value="">25</option>
-               
+              </select>
 
-            </select>
-        </div>
-        </div>
-        {/* display data */}
-       <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1  gap-2 mt-5 '>
-        {filteredData.map(items=>(
-          <div>
-            <ProductCard productData={items} />
+            </div>
+            <div className='text-gray-600 font-light text-sm'>
+              <span>Show: </span>
+              <select className=' border border-gray-300 focus:outline-none p-2'>
+                <option value="">5</option>
+                <option value="">15</option>
+                <option value="">25</option>
+
+
+              </select>
+            </div>
           </div>
-        ))}
+          {/* display data */}
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2 mt-5">
+            {filteredData && filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
+                <div key={index}>
+                  <ProductCard productData={item} />
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center text-gray-500">No products found.</div>
+            )}
+          </div>
 
-       </div>
         </div>
       </div>
     </div>

@@ -51,9 +51,8 @@ const NavMenu = () => {
               key={idx}
               className="relative group h-[50px] border-t-4 border-t-transparent hover:border-t-[#0371a8]"
             >
-              <a
-                href={link.href}
-                className="h-[50px] uppercase flex items-center text-gray-700 font-medium px-2 text-sm group-hover:text-[#0371a8]"
+              <div
+                className="h-[50px] cursor-pointer uppercase flex items-center text-gray-700 font-medium px-2 text-sm group-hover:text-[#0371a8]"
               >
                 {link.name}
                 {link.badge && (
@@ -62,7 +61,7 @@ const NavMenu = () => {
                   </span>
                 )}
                 {link.subname && <ChevronDown className="ml-1 w-4 h-4" />}
-              </a>
+              </div>
 
               {/* Dropdown */}
               {link.subname && (

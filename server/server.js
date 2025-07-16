@@ -5,12 +5,15 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes')
+const categoryRoutes=require('./routes/categoryRoutes')
+const productRoutes = require('./routes/productRoutes');
 const cors = require('cors');
 
 app.use(cors());
 // Middleware to parse JSON
 app.use(express.json());
 
+app.use('/uploads', express.static('uploads'));
 
 
 const MONGO_URI = 'mongodb+srv://adarshdhanwis:KzvLq3ubZItkxcwP@cluster0.xqnmw.mongodb.net/otptest'; // or your MongoDB Atlas URI
@@ -29,6 +32,9 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api",categoryRoutes)
+app.use('/api/products', productRoutes);
+
 
 
 
