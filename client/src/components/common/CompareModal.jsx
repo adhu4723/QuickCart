@@ -65,7 +65,7 @@ function CompareModal({ onClose, productData }) {
 
   return (
     <div className='fixed inset-0 z-50 flex items-center px-4 justify-center bg-black/50'>
-      <div className='bg-white w-full max-w-5xl  rounded-lg relative flex flex-col'>
+      <div className='bg-white w-full max-w-6xl  rounded-lg relative flex flex-col'>
         {/* Fixed Header */}
         <div className='flex justify-between items-center p-4 border-b border-gray-300  bg-white z-10'>
           <h1 className='uppercase font-semibold text-lg'>Compare Box</h1>
@@ -85,15 +85,22 @@ function CompareModal({ onClose, productData }) {
                     <td key={items.id} className='p-2 border-l  w-[260px] border-gray-300 relative'>
                       <button
                         className='bg-gray-800 text-white p-1 top-0 absolute right-0'
-                        onClick={() => removeproduct(items.id)}
+                        onClick={() => removeproduct(items._id)}
                       >
                         <X size={18} />
                       </button>
-                      <img
-                        className='bg-gray-200 mb-2 w-[150px] h-[150px] object-contain'
-                        src={items.img}
-                        alt={items.name}
-                      />
+                      <div className='flex gap-2 overflow-auto'>
+                        {
+                          items.images.map(items => (
+                            <img
+                              className=' mb-2 w-[150px] h-[150px] object-contain'
+                              src={items}
+                              alt={items}
+                            />
+                          ))
+                        }
+
+                      </div>
                       <h2 className='text-xs font-medium'>{items.name}</h2>
                     </td>
                   ))}
@@ -103,12 +110,12 @@ function CompareModal({ onClose, productData }) {
                   <th className='p-2 font-medium text-left'>Availability</th>
                   {compareData.map((items) => (
                     <td key={`availability-${items.id}`} className='p-2 border-l border-gray-300'>
-                      {items.stock>0?'In Stock':'Out of stock'}
+                      {items.stock > 0 ? 'In Stock' : 'Out of stock'}
                     </td>
                   ))}
                 </tr>
 
-                <tr>
+                <tr className='border border-gray-300'>
                   <th className='p-2 font-medium text-left'>Price</th>
                   {compareData.map((items) => (
                     <td key={`price-${items.id}`} className='p-2 border-l border-gray-300'>
@@ -124,10 +131,10 @@ function CompareModal({ onClose, productData }) {
                       <div className='flex flex-col gap-2 items-center'>
                         <div className='flex items-center gap-2 border border-gray-300 w-fit'>
                           <button className='border-r cursor-pointer border-gray-300 px-2 py-2'>-</button>
-                          <p className='font-semibold'>{items.quantity||0}</p>
+                          <p className='font-semibold'>{items.quantity || 0}</p>
                           <button className='border-l cursor-pointer border-gray-300 px-2 py-2'>+</button>
                         </div>
-                        <button disabled={items.stock==0} className={` ${items.stock==0?'bg-gray-300 cursor-not-allowed':'bg-gray-900 hover:bg-[#0371a8] cursor-pointer'}  text-nowrap   text-white uppercase text-xs px-3 py-2 flex gap-2 items-center`}>
+                        <button disabled={items.stock == 0} className={` ${items.stock == 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-900 hover:bg-[#0371a8] cursor-pointer'}  text-nowrap   text-white uppercase text-xs px-3 py-2 flex gap-2 items-center`}>
                           <ShoppingBag size={14} />
                           Add to Cart
                         </button>

@@ -1,60 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   ChevronDown,
   ChevronRight,
   Minus,
   Plus,
-  Menu,
   X,
   SlidersHorizontal,
 } from 'lucide-react';
 import Breadcrumb from '../components/common/Breadcrumb';
 import { ProductContext } from '../context/ProductContext';
 import ProductCard from '../components/common/ProductCard';
-
 import 'rc-slider/assets/index.css';
 import { Range } from 'react-range';
-
-const categoriesData = [
-  {
-    name: 'Accessories',
-    count: 3,
-    children: [
-      { name: 'Computers', count: 1 },
-      { name: 'Watches', count: 0 },
-      { name: 'Mobiles', count: 2 },
-    ],
-  },
-  {
-    name: 'Fashion',
-    count: 3,
-    children: [
-      { name: 'Men', count: 2 },
-      { name: 'Women', count: 2 },
-      { name: 'Footwear', count: 1 },
-    ],
-  },
-  {
-    name: 'Electronics',
-    count: 3,
-    children: [
-      { name: 'Mobiles', count: 2 },
-      { name: 'Watches', count: 2 },
-      { name: 'Audio', count: 4 },
-    ],
-  },
-];
 
 const sizes = ['Small', 'Large', 'Extra Large'];
 
 function Collection() {
   const { category, subCategory } = useParams();
-  const { filteredData, handleFilterProduct } = useContext(ProductContext)
-  const [sortdata, setsortData] = useState('')
-  console.log('category, subCategory,', category, subCategory);
-
-
+  const { filteredData, handleFilterProduct, products, categories } = useContext(ProductContext);
+  const [sortdata, setsortData] = useState('');
   const [openSections, setOpenSections] = useState({
     categories: true,
     price: true,
@@ -66,12 +31,13 @@ function Collection() {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [availability, setAvailability] = useState({
     inStock: true,
-    outOfStock: false,
+    outOfStock: true,
   });
-  const [showSidebar, setShowSidebar] = useState(false); // ➕ NEW
+  const [showSidebar, setShowSidebar] = useState(false);
 
-  console.log(openCategories);
-
+  useEffect(() => {
+    handleFilterProduct(category, subCategory, sortdata, priceRange, availability);
+  }, [category, subCategory, sortdata, priceRange, availability, products]);
 
   const toggleSection = (key) => {
     setOpenSections((prev) => ({
@@ -106,10 +72,31 @@ function Collection() {
     }));
   };
 
+  // ✅ Transform categories and product data for dynamic sidebar
+  const categoriesData = useMemo(() => {
+    return categories.map((cat) => {
+      const categoryProducts = products.filter(
+        (product) => product.category?.name === cat.name || product.category === cat._id
+      );
 
-  useEffect(() => {
-    handleFilterProduct(category, subCategory, sortdata, priceRange, availability);
-  }, [category, subCategory, sortdata, priceRange, availability]);
+      const subcategoryCounts = {};
+      categoryProducts.forEach((product) => {
+        const sub = product.subcategory?.name || product.subcategory;
+        if (sub) {
+          subcategoryCounts[sub] = (subcategoryCounts[sub] || 0) + 1;
+        }
+      });
+
+      return {
+        name: cat.name,
+        count: categoryProducts.length,
+        children: cat.subcategories.map((sub) => ({
+          name: sub.name,
+          count: subcategoryCounts[sub.name] || 0,
+        })),
+      };
+    });
+  }, [categories, products]);
 
   return (
     <div>
@@ -117,7 +104,6 @@ function Collection() {
 
       {/* Mobile Toggle Button */}
       <div className="md:hidden flex justify-between items-center px-4 mt-4">
-        <h2 className="text-lg font-semibold"></h2>
         <button onClick={() => setShowSidebar(!showSidebar)}>
           {showSidebar ? <X size={24} /> : <SlidersHorizontal size={24} />}
         </button>
@@ -126,12 +112,13 @@ function Collection() {
       <div className="flex flex-col md:grid md:grid-cols-7 gap-4 mt-5">
         {/* Sidebar */}
         <div
-          className={`md:col-span-2  border border-gray-300 p-4 space-y-6 text-sm bg-white z-10 md:static h-fit
-            ${showSidebar ? 'block' : 'hidden'} md:block`}
+          className={`md:col-span-2 border border-gray-300 p-4 space-y-6 text-sm bg-white z-10 md:static h-fit ${
+            showSidebar ? 'block' : 'hidden'
+          } md:block`}
         >
           {/* Categories */}
-          <div className='  '>
-            <div className="flexjustify-between items-center mb-2">
+          <div>
+            <div className="flex justify-between items-center mb-2">
               <h2 className="font-semibold uppercase">Categories</h2>
               <button onClick={() => toggleSection('categories')}>
                 {openSections.categories ? <Minus size={16} /> : <Plus size={16} />}
@@ -141,10 +128,10 @@ function Collection() {
               <ul className="space-y-2">
                 {categoriesData.map((cat) => (
                   <li key={cat.name}>
-
-                    <Link to={`/${cat.name}`}
+                    <Link
+                      to={`/${cat.name}`}
                       onClick={() => toggleCategory(cat.name)}
-                      className="w-full   flex justify-between items-center text-left hover:text-blue-600"
+                      className="w-full capitalize flex justify-between items-center text-left hover:text-blue-600"
                     >
                       <span className={`${cat.count > 0 ? 'text-black' : 'text-gray-500'}`}>
                         {cat.name} ({cat.count})
@@ -158,10 +145,10 @@ function Collection() {
                     </Link>
 
                     {cat.children.length > 0 && openCategories[cat.name] && (
-                      <ul className="ml-4 mt-1 space-y-1 text-gray-600">
+                      <ul className="ml-4 mt-1 capitalize space-y-1 text-gray-600">
                         {cat.children.map((sub) => (
-                          <li>
-                            <Link to={`/${cat.name}/${sub.name}`} key={sub.name}>
+                          <li key={sub.name}>
+                            <Link to={`/${cat.name}/${sub.name}`}>
                               {sub.name} ({sub.count})
                             </Link>
                           </li>
@@ -174,9 +161,9 @@ function Collection() {
             )}
           </div>
 
-          {/* Price */}
+          {/* Price Filter */}
           <div>
-            <div className="flex justify-between  items-center mb-2">
+            <div className="flex justify-between items-center mb-2">
               <h2 className="font-semibold uppercase">Price</h2>
               <button onClick={() => toggleSection('price')}>
                 {openSections.price ? <Minus size={16} /> : <Plus size={16} />}
@@ -189,16 +176,17 @@ function Collection() {
                   min={0}
                   max={1000}
                   values={priceRange}
-                  onChange={values => setPriceRange(values)}
+                  onChange={(values) => setPriceRange(values)}
                   renderTrack={({ props, children }) => (
-                    <div {...props} className="h-1 bg-gray-300 relative">{children}</div>
+                    <div {...props} className="h-1 bg-gray-300 relative">
+                      {children}
+                    </div>
                   )}
                   renderThumb={({ props }) => (
                     <div {...props} className="h-4 w-4 bg-blue-600 rounded-full" />
                   )}
                 />
-
-                <div className="flex  items-center gap-2 md:flex-col lg:flex-row">
+                <div className="flex items-center gap-2 md:flex-col lg:flex-row">
                   <input
                     type="number"
                     min={0}
@@ -221,7 +209,7 @@ function Collection() {
             )}
           </div>
 
-          {/* Size */}
+          {/* Size Filter */}
           <div>
             <div className="flex justify-between items-center mb-2">
               <h2 className="font-semibold uppercase">Size</h2>
@@ -235,10 +223,11 @@ function Collection() {
                   <button
                     key={size}
                     onClick={() => toggleSize(size)}
-                    className={`border border-gray-300 px-2 py-1 text-xs ${selectedSizes.includes(size)
-                      ? 'bg-black text-white'
-                      : 'text-gray-700'
-                      }`}
+                    className={`border border-gray-300 px-2 py-1 text-xs ${
+                      selectedSizes.includes(size)
+                        ? 'bg-black text-white'
+                        : 'text-gray-700'
+                    }`}
                   >
                     {size}
                   </button>
@@ -263,7 +252,7 @@ function Collection() {
                     checked={availability.inStock}
                     onChange={() => toggleAvailability('inStock')}
                   />
-                  In stock (2)
+                  In stock
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -271,41 +260,41 @@ function Collection() {
                     checked={availability.outOfStock}
                     onChange={() => toggleAvailability('outOfStock')}
                   />
-                  Out of stock (0)
+                  Out of stock
                 </label>
               </div>
             )}
           </div>
         </div>
 
-        {/* Product Area */}
-        <div className="md:col-span-5 ">
-          <div className='flex justify-between border border-gray-300 py-3 px-4'>
-            <div className='text-gray-600 font-light text-sm'>
-              <span>Sort by:  </span>
-              <select value={sortdata} onChange={(e) => setsortData(e.target.value)} className=' border border-gray-300 focus:outline-none p-2'>
+        {/* Product Display */}
+        <div className="md:col-span-5">
+          <div className="flex justify-between border border-gray-300 py-3 px-4">
+            <div className="text-gray-600 font-light text-sm">
+              <span>Sort by: </span>
+              <select
+                value={sortdata}
+                onChange={(e) => setsortData(e.target.value)}
+                className="border border-gray-300 focus:outline-none p-2"
+              >
                 <option value="">Featured</option>
                 <option value="popular">Popularity</option>
-                <option value="priceInc">Price,low to high</option>
-                <option value="priceDec">Price,high to low</option>
-                <option value="ratingInc">Rating ,low to high</option>
-                <option value="ratingDec">Rating ,high to low</option>
-
+                <option value="priceInc">Price, low to high</option>
+                <option value="priceDec">Price, high to low</option>
+                <option value="ratingInc">Rating, low to high</option>
+                <option value="ratingDec">Rating, high to low</option>
               </select>
-
             </div>
-            <div className='text-gray-600 font-light text-sm'>
+            <div className="text-gray-600 font-light text-sm">
               <span>Show: </span>
-              <select className=' border border-gray-300 focus:outline-none p-2'>
+              <select className="border border-gray-300 focus:outline-none p-2">
                 <option value="">5</option>
                 <option value="">15</option>
                 <option value="">25</option>
-
-
               </select>
             </div>
           </div>
-          {/* display data */}
+
           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2 mt-5">
             {filteredData && filteredData.length > 0 ? (
               filteredData.map((item, index) => (
@@ -314,10 +303,11 @@ function Collection() {
                 </div>
               ))
             ) : (
-              <div className="col-span-full text-center text-gray-500">No products found.</div>
+              <div className="col-span-full text-center text-gray-500">
+                No products found.
+              </div>
             )}
           </div>
-
         </div>
       </div>
     </div>

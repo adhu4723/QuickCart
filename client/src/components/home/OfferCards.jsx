@@ -1,42 +1,71 @@
-import React from 'react'
+import React, { useContext } from 'react';
+import Slider from 'react-slick';
+import { ProductContext } from '../../context/ProductContext';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 function OfferCards() {
-    return (
-        <div className='py-10'>
-            <div className='flex justify-center flex-wrap  gap-4' >
-            <div className='bg-gray-200 w-full lg:w-fit  flex justify-center items-center px-4' >
-                <div>
-                    <h1 className='font-bold text-xl mb-4'>Porto Watches <br /> <span className='line-through'>20%</span> <span className='text-3xl text-[#0371a8] font-extrabold'>30%OFF</span>  </h1>
-                    <button className='bg-gray-900 text-white font-bold px-4 py-2 cursor-pointer'>SHOP NOW</button>
-                </div>
+    const { discounts } = useContext(ProductContext);
+    console.log('discounts', discounts);
 
-                <img width={200} src="https://parspng.com/wp-content/uploads/2023/06/watchpng.parspng.com-10.png" alt="" />
-            </div>
-            <div className='px-3 w-full lg:w-fit  bg-gray-200   flex justify-center items-center'>
-                <div className='flex gap-4  rounded py-10 px-4 h-full items-center'>
-                <div>
-                    <h1 className='font-bold text-xl'>DEAL PROMOS</h1>
-                    <p className='text-gray-600 font-semibold'>STARTING AT $99</p>
-                </div>
-                <button className='bg-gray-900 text-white font-bold px-4 py-2 cursor-pointer'>SHOP NOW</button>
-
-
-            </div>
-            </div>
-            <div className='flex w-full lg:w-fit items-center justify-center gap-4 bg-gray-200 px-4'>
-               
-                <img width={200} src="https://static.vecteezy.com/system/resources/previews/037/210/932/non_2x/ai-generated-woman-handy-purse-on-transparent-background-ai-generated-png.png" alt="" />
-                 <div className='space-y-1.5'>
-                    <h1 className='font-bold text-2xl'>Handbags</h1>
-                    <p className='text-red-400 font-semibold'>STARTING AT $99</p>
-                    <button className='bg-gray-900 text-white font-bold px-4 py-2 cursor-pointer'>SHOP NOW</button>
-
-
-                </div>
-            </div>
-            </div>
+    const NextArrow = ({ onClick }) => (
+        <div
+            onClick={onClick}
+            className="absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full cursor-pointer shadow-lg"
+        >
+            <ChevronRight size={20} />
         </div>
-    )
+    );
+
+    const PrevArrow = ({ onClick }) => (
+        <div
+            onClick={onClick}
+            className="absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full cursor-pointer shadow-lg"
+        >
+            <ChevronLeft size={20} />
+        </div>
+    );
+
+  const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 2, // Default: laptop and tablet
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 3000,
+  nextArrow: <NextArrow />,
+  prevArrow: <PrevArrow />,
+  responsive: [
+    {
+      breakpoint: 768, // Mobile: screens < 768px
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+};
+
+
+
+    return (
+        <div className="w-full mx-auto p-4 relative">
+            <Slider {...settings}>
+                {discounts.map((item, index) => (
+                    <Link to={`/offers/${item._id}`} key={index} className="p-2">
+                        <img 
+                            src={item.image} 
+                            alt={item.title} 
+                            className="w-full lg:h-[450px] object-cover rounded-lg shadow-lg" 
+                        />
+                    </Link>
+                ))}
+            </Slider>
+        </div>
+    );
 }
 
-export default OfferCards
+export default OfferCards;

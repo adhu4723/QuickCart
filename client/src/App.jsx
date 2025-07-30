@@ -1,45 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Header from './layout/Header'
-import Layout from './layout/Layout'
-import { Route, Routes } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import Register from './pages/Register'
-import Login from './pages/Login'
-import NewsPage from './pages/NewsPage'
-import NewsLayout from './components/news/NewsLayout'
-import NewsDetails from './pages/NewsDetails'
-import Collection from './pages/Collection'
-import AboutUs from './pages/AboutUs'
+import { useState, Suspense, lazy } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import Layout from './layout/Layout';
+import NewsLayout from './components/news/NewsLayout';
+import OfferPage from './pages/OfferPage';
+
+// Lazy-loaded pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const Register = lazy(() => import('./pages/Register'));
+const Login = lazy(() => import('./pages/Login'));
+const NewsPage = lazy(() => import('./pages/NewsPage'));
+const NewsDetails = lazy(() => import('./pages/NewsDetails'));
+const Collection = lazy(() => import('./pages/Collection'));
+const AboutUs = lazy(() => import('./pages/AboutUs'));
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
-    <>
-    <Routes>
-      <Route element={<Layout/>}>
-        <Route path='/' element={<HomePage/>} />
-        <Route path='/register' element={<Register/>} />
-        <Route path='/login' element={<Login/>} />
-        <Route element={<NewsLayout/>}>
-        <Route path='/news' element={<NewsPage/>} />
-         <Route path='/news/:id' element={<NewsDetails/>} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path='/' element={<HomePage />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='/login' element={<Login />} />
 
+          <Route element={<NewsLayout />}>
+            <Route path='/news' element={<NewsPage />} />
+            <Route path='/news/:id' element={<NewsDetails />} />
+          </Route>
+
+          <Route path='/:category/:subCategory?' element={<Collection />} />
+          <Route path='/company/:category' element={<AboutUs />} />
+          <Route path='/offers/:id' element={<OfferPage />} />
 
         </Route>
-        <Route path='/:category/:subCategory?' element={<Collection/>}/>
-        <Route path='/company/:category' element={<AboutUs/>} />
-
-
-      </Route>
-    </Routes>
-     
-    
-    </>
-  )
+      </Routes>
+    </Suspense>
+  );
 }
 
-export default App
+export default App;

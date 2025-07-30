@@ -13,8 +13,17 @@ const productSchema = new mongoose.Schema({
     required: true
   },
   subcategory: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true
+  },
+  discount: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Discount',
+    default: null
+  },
+  discountedPrice: {
+    type: Number,
+    default: null
   },
   isFeatured: { type: Boolean, default: false },
   reviews: [

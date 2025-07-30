@@ -9,6 +9,9 @@ import Category from './pages/Category'
 import 'antd/dist/reset.css';
 import { message } from 'antd';
 import Product from './pages/Product'
+import AdminLogin from './pages/Login'
+import ProtectedRoute from './components/ProtectedRoute'
+import Offer from './pages/Offer'
 
 
 function App() {
@@ -18,11 +21,16 @@ function App() {
     <>
 
     <Routes>
+       <Route path='/admin/login' element={<AdminLogin/>}/>
+               <Route element={<ProtectedRoute />}>
+
       <Route path='/admin' element={<AdminLayout/>}>
         <Route path='dashboard' element={<Dashboard/>}/>
         <Route path='category' element={<Category/>}/>
         <Route path='products' element={<Product/>}/>
+        <Route path='offers' element={<Offer/>}/>
 
+</Route>
       </Route>
     </Routes>
       

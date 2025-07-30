@@ -7,6 +7,9 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes')
 const categoryRoutes=require('./routes/categoryRoutes')
 const productRoutes = require('./routes/productRoutes');
+const discountRoutes = require('./routes/discountRoutes');
+const geminiRoutes = require('./routes/geminiRoutes');
+
 const cors = require('cors');
 
 app.use(cors());
@@ -34,6 +37,8 @@ app.get('/', (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api",categoryRoutes)
 app.use('/api/products', productRoutes);
+app.use('/api/discounts', discountRoutes);
+app.use('/api/gemini', geminiRoutes);
 
 
 

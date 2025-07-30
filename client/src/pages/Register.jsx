@@ -75,7 +75,7 @@ const handleverify=async(e)=>{
 
             <form
                 onSubmit={handleSubmit}
-                className='bg-white space-y-4 max-w-2xl px-6 py-4 my-4 shadow-sm mx-auto'
+                className='bg-white space-y-4 max-w-2xl lg:px-6 py-4 my-4 shadow-sm mx-auto'
             >
                 <h1 className='font-semibold text-2xl text-gray-800'>Register</h1>
                 <InputField

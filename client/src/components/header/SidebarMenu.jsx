@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { ChevronDown, Flame } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ProductContext } from "../../context/ProductContext";
 
 const SidebarMenu = () => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -18,6 +19,16 @@ const SidebarMenu = () => {
     }));
   };
 
+  const { categories } = useContext(ProductContext);
+  
+    // 🧠 Transform categories into required structure for the Products menu
+    const transformedProductSubmenu = useMemo(() => {
+      return categories.map((cat) => ({
+        main: cat.name,
+        sub: cat.subcategories.map((sub) => sub.name),
+      }));
+    }, [categories]);
+
   const navLinks = [
     { name: "Home", href: "/" },
     {
@@ -33,11 +44,7 @@ const SidebarMenu = () => {
     {
       name: "Products",
       href: "/collections/all.html",
-      subname: [
-        { main: "Electronics", sub: ["Mobiles", "Laptops", "Home Appliances", "Cameras"] },
-        { main: "Fashion", sub: ["Men", "Women", "Kids", "Accessories"] },
-        { main: "Furniture", sub: ["Living Room", "Bedroom", "Office"] },
-      ],
+      subname: transformedProductSubmenu
     },
     {
       name: "Services",

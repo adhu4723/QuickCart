@@ -26,11 +26,11 @@ function ProductCard({ productData }) {
       )}
       {compareModal && <CompareModal onClose={() => setcompareModal(false)} />}
 
-      <div className="w-full shadow-sm group bg-white py-2 rounded-2xl px-2">
-        <div className="bg-gray-200 w-full rounded-xl relative overflow-hidden">
+      <div className="w-full shadow-lg group bg-white py-3 rounded-2xl px-2 transition-transform duration-300 transform hover:-translate-y-1">
+        <div className="border border-gray-300 bg-gray-200  w-full rounded-xl relative overflow-hidden">
           <img
             className="p-4 h-[250px] w-full object-contain"
-            src={productData?.img || ''}
+            src={productData?.img || productData?.images[0] || ''}
             alt={productData?.name || ''}
           />
 
@@ -55,8 +55,15 @@ function ProductCard({ productData }) {
           <Link className="text-gray-500 font-light uppercase text-xs">
             Accessories, Caps
           </Link>
-          <h1 className="text-gray-600 line-clamp-1">{productData?.name || ''}</h1>
-          <p className="text-gray-800 font-medium">₹{productData?.price || ''}</p>
+          <h1 className="text-gray-600 line-clamp-1 capitalize">{productData?.name || ''}</h1>
+          {productData?.discountedPrice ? (
+            <div className="flex items-center justify-center gap-2">
+              <p className="text-gray-500 line-through text-sm">₹{productData.price}</p>
+              <p className="text-red-600 font-semibold text-lg">₹{productData.discountedPrice}</p>
+            </div>
+          ) : (
+            <p className="text-gray-800 font-medium">₹{productData.price}</p>
+          )}
 
           {/* ⭐ Star Rating */}
           <StarRating rating={productData?.rating || 0} />
@@ -82,10 +89,9 @@ function ProductCard({ productData }) {
               disabled={productData.stock === 0}
               className={`
                 uppercase text-xs px-3 py-2 flex gap-2 items-center 
-                ${
-                  productData.stock === 0
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-200 text-gray-800 md:group-hover:bg-gray-900 md:group-hover:text-white cursor-pointer'
+                ${productData.stock === 0
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-200 text-gray-800 md:group-hover:bg-gray-900 md:group-hover:text-white cursor-pointer'
                 }
               `}
             >
@@ -97,7 +103,7 @@ function ProductCard({ productData }) {
             <button
               onClick={() => {
                 setcompareModal(true);
-                compareProducts(productData.id);
+                compareProducts(productData._id);
               }}
               className="
                 absolute right-0 top-1/2 -translate-y-1/2 

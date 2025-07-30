@@ -19,11 +19,11 @@ const MiddleBar = ({toogleshow}) => {
           </Link>
         </div>
         <div className="shadow-sm w-1/2 text-gray-600 lg:flex items-center hidden font-light text-sm  pl-4 bg-gray-100 rounded-2xl ">
-          <input type="text" placeholder="Search..." className="w-full   border border-none   py-2 focus:outline-none" />
+          <input type="text" placeholder="Search..." className="w-full bg-transparent   border border-none   py-3 px-2 focus:outline-none" />
           <div className="  top-0 gap-2 right-0 flex border-l-2 border-white  items-center ">
             <div className="">
 
-            <select className="focus:outline-none  px-2 "  name="" id="">
+            <select className="focus:outline-none  px-2 bg-transparent "  name="" id="">
                 <option value="">All Categories</option>
             </select>
             </div>

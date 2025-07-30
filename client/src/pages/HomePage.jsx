@@ -12,6 +12,8 @@ import FeatureSection from '../components/home/Services'
 import Banner2 from '../components/home/Banner2'
 import NewsSec from '../components/home/NewsSec'
 import { productData } from '../assets/Data/productData'
+import { useContext } from 'react'
+import { ProductContext } from '../context/ProductContext'
 
 function HomePage() {
 //   const productData = [
@@ -107,19 +109,20 @@ function HomePage() {
 //   },
 // ];
 
-
+const {products}=useContext(ProductContext)
+const featuredProduct=products.filter(items=>items.isFeatured==true)
   return (
     <div >
       
-    <div className='space-y-15'>
+    <div className='space-y-12'>
 
       <Carousel />
       {/* <Features /> */}
       <OfferCards />
 
 
-      <Sections productData={productData.slice(0,7)} label={'FEATURED PRODUCTS'} />
-      <Sections productData={productData.slice(7,14)} label={'NEW ARRIVALS'} />
+      <Sections productData={featuredProduct.slice(0,7)} label={'FEATURED PRODUCTS'} />
+      <Sections productData={products.slice(5,10)} label={'NEW ARRIVALS'} />
 
       <Banner/>
       <CategorySec label={'BROWSE OUR CATEGORIES'}/>

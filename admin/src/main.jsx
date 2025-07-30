@@ -6,13 +6,16 @@ import { BrowserRouter } from 'react-router-dom'
 import 'antd/dist/reset.css'; 
 import { CategoryProvider } from './context/CategoryContext.jsx'
 import { ProductProvider } from './context/ProductContext.jsx'
+import { DiscountProvider } from './context/DiscountContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
      <CategoryProvider>
       <ProductProvider>
+        <DiscountProvider>
     <App />
+    </DiscountProvider>
     </ProductProvider>
     </CategoryProvider>
     </BrowserRouter>
